@@ -703,5 +703,9 @@
   "codeErrorInternal": "Internal server error, please try again later",
   "codeErrorGateway": "The current network connection is experiencing an issue. Please try again later",
   "codeErrorBusy": "The system is busy and in queue. Please try again later",
-  "codeErrorTimeout": "Request response timeout, please check your network connection and try again"
+  "codeErrorTimeout": "Request response timeout, please check your network connection and try again",
+  "appConfig": "App Configuration",
+  "heatMap": "Heatmap",
+  "appChatStyle": "App Interface Configuration",
+  "appChatStyleCannotBeEmpty": "App interface configuration cannot be empty"
 }

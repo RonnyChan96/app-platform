@@ -937,5 +937,9 @@
   "codeErrorInternal": "服务器内部错误，请稍后重试",
   "codeErrorGateway": "当前网络连接出现异常，请稍后重试",
   "codeErrorBusy": "系统繁忙，排队中，请稍后重试",
-  "codeErrorTimeout": "请求响应超时，请检查网络连接后重试"
+  "codeErrorTimeout": "请求响应超时，请检查网络连接后重试",
+  "appConfig": "应用配置",
+  "heatMap": "热力图",
+  "appChatStyle": "应用界面配置",
+  "appChatStyleCannotBeEmpty": "应用界面配置不能为空"
 }
