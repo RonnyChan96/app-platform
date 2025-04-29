@@ -944,5 +944,10 @@
   "appChatStyleCannotBeEmpty": "应用界面配置不能为空",
   "deletePluginTips": "删除后无法恢复，会导致正在运行的应用不可用，是否确定删除",
   "copyApp": "应用复制",
-  "copyAppFailed": "应用复制失败"
+  "copyAppFailed": "应用复制失败",
+  "displayAllNodes": "显示所有节点",
+  "handMode": "手模式",
+  "reorganizeNodes": "整理节点",
+  "zoomOut": "缩小",
+  "zoomIn": "放大"
 }

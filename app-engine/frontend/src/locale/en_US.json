@@ -944,5 +944,10 @@
   "retrievalIndexType": "Search Mode",
   "formItemNameRule": "Can only contain letters, numbers, or underscores, and must start with a letter or underscore",
   "copyApp": "Applicaton Replication",
-  "copyAppFailed": "Applicaton Replication Failed"
+  "copyAppFailed": "Applicaton Replication Failed",
+  "displayAllNodes": "Display all nodes",
+  "handMode": "Hand mode",
+  "reorganizeNodes": "Organize nodes",
+  "zoomOut": "Zoom Out",
+  "zoomIn": "Zoom In"
 }
