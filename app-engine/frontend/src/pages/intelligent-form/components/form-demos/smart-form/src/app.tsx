@@ -54,7 +54,6 @@ export default function App() {
       <DataContext.Provider value={{ ...receiveData, terminateClick, resumingClick, restartClick}}>
         <SmartForm
           onSubmit={data => {
-            console.log("data: ", JSON.stringify({"params" : data}));
             resumingClick({"params" : data});
           }}
           onCancel={terminateClick}

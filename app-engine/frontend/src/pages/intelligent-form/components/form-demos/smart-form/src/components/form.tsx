@@ -17,32 +17,17 @@ import '../styles/form.scss';
 const SmartForm = ({onSubmit, onCancel}) => {
 
   const buildFormSchema = (parameters, data) => {
+    const map = {
+      Input: 'input',
+      Radio: 'radio',
+      Switch: 'switch',
+      Select: 'select',
+      CheckBox: 'checkBox',
+      Label: 'label',
+    };
     return parameters.map((param) => {
       // renderType 与本 SmartForm 中需要的 type 映射
-      let fieldType;
-      switch (param.renderType) {
-        case 'Input':
-          fieldType = 'input';
-          break;
-        case 'Radio':
-          fieldType = 'radio';
-          break;
-        case 'Switch':
-          fieldType = 'switch';
-          break;
-        case 'Select':
-          fieldType = 'select';
-          break;
-        case 'CheckBox':
-          fieldType = 'checkBox';
-          break;
-        case 'Label':
-          fieldType = 'label';
-          break;
-        default:
-          fieldType = 'input'; // 默认当做普通输入框
-          break;
-      }
+      let fieldType = map[param.renderType] || map['Input'];
 
       // 若 data 中存在 name + '-options'，则作为可选项
       const dynamicKey = `${param.name}-options`;
