@@ -925,8 +925,8 @@
   "formItemName": "表单项名称",
   "formItemDisplayName": "表单项展示名称",
   "formItemType": "表单项类型",
-  "formItemRenderType": "表单项渲染方式",
-  "formItemRenderTypeCannotBeEmpty": "渲染方式不能为空",
+  "formItemRenderType": "表单项渲染组件",
+  "formItemRenderTypeCannotBeEmpty": "渲染组件不能为空",
   "formItemDefaultValue": "表单项默认值",
   "formItemOptionsValue": "表单选项",
   "pushResultToChat": "输出结果至聊天",
@@ -950,5 +950,6 @@
   "handMode": "手模式",
   "reorganizeNodes": "整理节点",
   "zoomOut": "缩小",
-  "zoomIn": "放大"
+  "zoomIn": "放大",
+  "formItemFieldTypeCannotBeEmpty": "表单项类型不能为空"
 }

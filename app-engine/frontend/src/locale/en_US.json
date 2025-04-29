@@ -950,5 +950,6 @@
   "handMode": "Hand mode",
   "reorganizeNodes": "Organize nodes",
   "zoomOut": "Zoom Out",
-  "zoomIn": "Zoom In"
+  "zoomIn": "Zoom In",
+  "formItemFieldTypeCannotBeEmpty": "Field type is required"
 }
