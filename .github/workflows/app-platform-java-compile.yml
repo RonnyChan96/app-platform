@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'develop'
     paths:
       - 'app-builder/**'
       - '!app-builder/fel/python/**'
@@ -17,6 +18,7 @@ on:
   pull_request:
     branches:
       - 'main'
+      - 'develop'
     paths:
       - 'app-builder/**'
       - '!app-builder/fel/python/**'
