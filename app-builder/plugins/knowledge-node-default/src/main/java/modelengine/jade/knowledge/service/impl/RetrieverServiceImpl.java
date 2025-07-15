@@ -122,7 +122,7 @@ public class RetrieverServiceImpl implements RetrieverService {
         RerankOption rerankOption = RerankOption.custom()
                 .baseUri(ObjectUtils.nullIf(rerankParam.getBaseUri(), this.baseRerankUri))
                 .model(rerankParam.getModel())
-                .topN(rerankParam.getTopK())
+                .topN(rerankParam.getTopN())
                 .query(String.join("\n", query))
                 .build();
         return new FactoryOption(true, rerankOption);
