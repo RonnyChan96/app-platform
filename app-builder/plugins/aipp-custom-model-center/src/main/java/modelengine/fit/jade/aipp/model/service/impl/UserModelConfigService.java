@@ -8,6 +8,7 @@ package modelengine.fit.jade.aipp.model.service.impl;
 
 import modelengine.fit.jade.aipp.model.dto.UserModelDetailDto;
 
+import modelengine.fit.jade.aipp.model.enums.ModelType;
 import modelengine.fit.jade.aipp.model.po.ModelPo;
 import modelengine.fit.jade.aipp.model.po.UserModelPo;
 import modelengine.fit.jade.aipp.model.repository.UserModelRepo;
@@ -40,7 +41,6 @@ import java.util.stream.Collectors;
 public class UserModelConfigService implements UserModelConfig {
     private static final Logger log = Logger.get(UserModelConfig.class);
     private static final String FITABLE_ID = "aipp.model.service.impl";
-    private static final String DEFAULT_MODEL_TYPE = "chat_completions";
     private final UserModelRepo userModelRepo;
 
     /**
@@ -94,17 +94,17 @@ public class UserModelConfigService implements UserModelConfig {
             @Attribute(key = "tags", value = "FIT"), @Attribute(key = "tags", value = "MODEL")
     })
     @Property(description = "为用户添加可用的模型信息")
-    public String addUserModel(String userId, String apiKey, String modelName, String baseUrl) {
+    public String addUserModel(String userId, String apiKey, String modelName, String baseUrl, String type) {
         log.info("start add user model for {}.", userId);
         String modelId = UUID.randomUUID().toString().replace("-", "");
-        boolean hasDefault = this.userModelRepo.hasDefaultModel(userId);
+        boolean hasDefault = this.userModelRepo.hasDefaultModel(userId, type);
 
         ModelPo modelPo = ModelPo.builder()
                 .modelId(modelId)
                 .name(modelName)
                 .tag(modelId)
                 .baseUrl(baseUrl)
-                .type(DEFAULT_MODEL_TYPE)
+                .type(ModelType.valueOf(type).value())
                 .createdBy(userId)
                 .updatedBy(userId)
                 .build();
@@ -142,23 +142,25 @@ public class UserModelConfigService implements UserModelConfig {
         if (target == null) {
             return "删除模型失败，该模型不属于当前用户。";
         }
+        ModelPo deleteModel = userModelRepo.getModel(modelId);
         this.userModelRepo.deleteByModelId(modelId);
         // 如果删除的不是默认模型，直接返回
         if (target.getIsDefault() != 1) {
             return "删除模型成功。";
         }
-        userModels.remove(target);
+        List<ModelPo> sameTypeModelPos = userModelRepo.listModelsByUserId(userId, deleteModel.getType());
+
         // 如果没有默认模型，但还有其他记录，则设置最新创建的为默认
-        if (CollectionUtils.isNotEmpty(userModels)) {
-            UserModelPo latestUserModel = userModels.stream()
+        if (CollectionUtils.isNotEmpty(sameTypeModelPos)) {
+            ModelPo latestUserModel = sameTypeModelPos.stream()
                     .filter(m -> m.getCreatedAt() != null)
-                    .max(Comparator.comparing(UserModelPo::getCreatedAt))
+                    .max(Comparator.comparing(ModelPo::getCreatedAt))
                     .orElse(null);
 
             if (latestUserModel != null) {
-                this.userModelRepo.switchDefaultUserModel(userId, latestUserModel.getModelId());
-                return String.format("删除默认模型成功，已将%s设为默认模型。",
-                        this.userModelRepo.getModel(latestUserModel.getModelId()).getName());
+                this.userModelRepo.switchDefaultUserModel(userId, latestUserModel.getModelId(),
+                        latestUserModel.getType());
+                return String.format("删除默认模型成功，已将%s设为默认模型。", latestUserModel.getName());
             }
         }
         return "删除模型成功，当前无默认模型。";
@@ -170,9 +172,9 @@ public class UserModelConfigService implements UserModelConfig {
             @Attribute(key = "tags", value = "FIT"), @Attribute(key = "tags", value = "MODEL")
     })
     @Property(description = "将指定模型设置为用户的默认模型")
-    public String switchDefaultModel(String userId, String modelId) {
+    public String switchDefaultModel(String userId, String modelId, String type) {
         log.info("start switch default model for {}.", userId);
-        int rows = this.userModelRepo.switchDefaultUserModel(userId, modelId);
+        int rows = this.userModelRepo.switchDefaultUserModel(userId, modelId, type);
         if (rows == 0) {
             return "未查到对应模型。";
         }

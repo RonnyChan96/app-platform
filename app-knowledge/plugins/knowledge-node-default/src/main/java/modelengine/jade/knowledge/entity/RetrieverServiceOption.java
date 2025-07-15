@@ -76,6 +76,6 @@ public class RetrieverServiceOption {
         /**
          * 重排后保留最相关的文档数量。
          */
-        private Integer topK;
+        private Integer topN;
     }
 }
