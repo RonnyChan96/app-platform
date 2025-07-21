@@ -17,4 +17,9 @@ public class AippConstant {
      * NAS 共享目录。
      */
     public static final String NAS_SHARE_DIR = "/var/share";
+
+    /**
+     * 下载文件的 uri 路径前缀。
+     */
+    public static final String DOWNLOAD_FILE_ORIGIN = "/v1/api/31f20efc7e0848deab6a6bc10fc3021e/file?";
 }
