@@ -6,9 +6,11 @@
 
 package modelengine.fit.jober.aipp.converters.impl;
 
+import lombok.RequiredArgsConstructor;
 import modelengine.fit.jober.aipp.common.exception.AippErrCode;
 import modelengine.fit.jober.aipp.common.exception.AippException;
 import modelengine.fit.jober.aipp.converters.EntityConverter;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.domain.AppBuilderConfig;
 import modelengine.fit.jober.aipp.domain.AppBuilderFlowGraph;
 import modelengine.fit.jober.aipp.domain.AppBuilderFormProperty;
@@ -25,6 +27,7 @@ import modelengine.fitframework.inspection.Validation;
 import modelengine.fitframework.util.ObjectUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +42,10 @@ import java.util.stream.Collectors;
  * @since 2025-02-18
  */
 @Component
+@RequiredArgsConstructor
 public class AppVersionToAppDtoConverter implements EntityConverter {
     private static final String FORM_PROPERTY_GROUP_NULL = "null";
+    private final IconConverter iconConverter;
 
     @Override
     public Class<AppVersion> source() {
@@ -55,12 +60,15 @@ public class AppVersionToAppDtoConverter implements EntityConverter {
     @Override
     public AppBuilderAppDto convert(Object appVersion) {
         return Optional.ofNullable(appVersion).map(ObjectUtils::<AppVersion>cast).map(s -> {
+            Map<String, Object> attributes = new HashMap<>(s.getAttributes());
+            attributes.computeIfPresent("icon",
+                    (k, v) -> this.iconConverter.toFrontend(String.valueOf(v)));
             AppBuilderAppDto.AppBuilderAppDtoBuilder appDtoBuilder = AppBuilderAppDto.builder()
                     .id(s.getData().getId())
                     .name(s.getData().getName())
                     .type(s.getData().getType())
                     .state(s.getData().getState())
-                    .attributes(s.getAttributes())
+                    .attributes(attributes)
                     .appType(s.getData().getAppType())
                     .version(s.getData().getVersion())
                     .appCategory(s.getData().getAppCategory())

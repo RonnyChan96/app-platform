@@ -48,6 +48,7 @@ public class AppVersionRepositoryImpl implements AppVersionRepository {
     @Override
     public void update(AppVersion appVersion) {
         this.mapper.updateOne(this.serializer.serialize(appVersion));
+        appVersion.processIconPath();
     }
 
     @Override
@@ -63,6 +64,7 @@ public class AppVersionRepositoryImpl implements AppVersionRepository {
     @Override
     public void save(AppVersion appVersion) {
         this.mapper.insertOne(this.serializer.serialize(appVersion));
+        appVersion.processIconPath();
     }
 
     @Override

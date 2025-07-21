@@ -6,7 +6,9 @@
 
 package modelengine.fit.jober.aipp.converters.impl;
 
+import lombok.RequiredArgsConstructor;
 import modelengine.fit.jober.aipp.converters.EntityConverter;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.domains.appversion.AppVersion;
 import modelengine.fit.jober.aipp.dto.AppBuilderAppMetadataDto;
 
@@ -14,8 +16,10 @@ import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,7 +29,10 @@ import java.util.Optional;
  * @since 2025-02-18
  */
 @Component
+@RequiredArgsConstructor
 public class AppVersionToMetaDtoConverter implements EntityConverter {
+    private final IconConverter iconConverter;
+
     @Override
     public Class<AppVersion> source() {
         return AppVersion.class;
@@ -41,13 +48,16 @@ public class AppVersionToMetaDtoConverter implements EntityConverter {
         return Optional.ofNullable(appVersion).map(ObjectUtils::<AppVersion>cast).map(s -> {
             List<String> tags = new ArrayList<>();
             tags.add(s.getData().getType().toUpperCase(Locale.ROOT));
+            Map<String, Object> attributes = new HashMap<>(s.getAttributes());
+            attributes.computeIfPresent("icon",
+                    (k, v) -> this.iconConverter.toFrontend(String.valueOf(v)));
             return AppBuilderAppMetadataDto.builder()
                     .id(s.getData().getId())
                     .name(s.getData().getName())
                     .type(s.getData().getType())
                     .state(s.getData().getState())
                     .appType(s.getData().getAppType())
-                    .attributes(s.getAttributes())
+                    .attributes(attributes)
                     .version(s.getData().getVersion())
                     .createBy(s.getData().getCreateBy())
                     .updateBy(s.getData().getUpdateBy())

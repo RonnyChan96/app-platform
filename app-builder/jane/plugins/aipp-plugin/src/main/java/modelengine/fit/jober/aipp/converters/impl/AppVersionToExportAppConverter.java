@@ -6,7 +6,9 @@
 
 package modelengine.fit.jober.aipp.converters.impl;
 
+import lombok.RequiredArgsConstructor;
 import modelengine.fit.jober.aipp.converters.EntityConverter;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.domains.appversion.AppVersion;
 import modelengine.fit.jober.aipp.dto.export.AppExportApp;
 import modelengine.fit.jober.aipp.po.AppBuilderAppPo;
@@ -14,6 +16,8 @@ import modelengine.fit.jober.aipp.util.JsonUtils;
 import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.util.ObjectUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -23,7 +27,10 @@ import java.util.Optional;
  * @since 2025-02-14
  */
 @Component
+@RequiredArgsConstructor
 public class AppVersionToExportAppConverter implements EntityConverter {
+    private final IconConverter iconConverter;
+
     @Override
     public Class<AppVersion> source() {
         return AppVersion.class;
@@ -38,13 +45,18 @@ public class AppVersionToExportAppConverter implements EntityConverter {
     public AppExportApp convert(Object appVersion) {
         return Optional.ofNullable(appVersion).map(ObjectUtils::<AppVersion>cast).map(s -> {
             AppBuilderAppPo appBuilderAppPo = s.getData();
+            Map<String, Object> attributes = Optional.ofNullable(appBuilderAppPo.getAttributes())
+                    .map(JsonUtils::parseObject)
+                    .orElseGet(HashMap::new);
+            attributes.computeIfPresent("icon",
+                    (k, v) -> this.iconConverter.toFrontend(String.valueOf(v)));
             return AppExportApp.builder()
                     .name(appBuilderAppPo.getName())
                     .tenantId(appBuilderAppPo.getTenantId())
                     .type(appBuilderAppPo.getType())
                     .appBuiltType(appBuilderAppPo.getAppBuiltType())
                     .version(appBuilderAppPo.getVersion())
-                    .attributes(JsonUtils.parseObject(appBuilderAppPo.getAttributes()))
+                    .attributes(attributes)
                     .appCategory(appBuilderAppPo.getAppCategory())
                     .appType(appBuilderAppPo.getAppType())
                     .build();

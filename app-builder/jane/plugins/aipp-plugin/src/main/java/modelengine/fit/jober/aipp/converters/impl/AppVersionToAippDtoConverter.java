@@ -6,7 +6,9 @@
 
 package modelengine.fit.jober.aipp.converters.impl;
 
+import lombok.RequiredArgsConstructor;
 import modelengine.fit.jober.aipp.converters.EntityConverter;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.domains.appversion.AppVersion;
 import modelengine.fit.jober.aipp.dto.AippDto;
 import modelengine.fit.jober.aipp.util.JsonUtils;
@@ -24,7 +26,10 @@ import java.util.Optional;
  * @since 2025-02-18
  */
 @Component
+@RequiredArgsConstructor
 public class AppVersionToAippDtoConverter implements EntityConverter {
+    private final IconConverter iconConverter;
+
     @Override
     public Class<AppVersion> source() {
         return AppVersion.class;
@@ -39,7 +44,7 @@ public class AppVersionToAippDtoConverter implements EntityConverter {
     public AippDto convert(Object appVersion) {
         return Optional.ofNullable(appVersion).map(ObjectUtils::<AppVersion>cast).map(s -> {
             String description = ObjectUtils.nullIf(s.getDescription(), StringUtils.EMPTY);
-            String icon = ObjectUtils.nullIf(s.getIcon(), StringUtils.EMPTY);
+            String icon = this.iconConverter.toFrontend(ObjectUtils.nullIf(s.getIcon(), StringUtils.EMPTY));
             return AippDto.builder()
                     .name(s.getData().getName())
                     .description(description)

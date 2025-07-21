@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import modelengine.fit.jane.common.entity.OperationContext;
 import modelengine.fit.jober.aipp.converters.ConverterFactory;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.converters.impl.AppVersionToAppDtoConverter;
 import modelengine.fit.jober.aipp.domain.AppBuilderConfig;
 import modelengine.fit.jober.aipp.domain.AppBuilderFlowGraph;
@@ -63,6 +64,7 @@ public class AppServiceTest {
     private AppVersionService appVersionService;
     private UploadedFileManageService uploadedFileManageService;
     private UsrAppCollectionService usrAppCollectionService;
+    private IconConverter iconConverter;
 
     @BeforeEach
     public void setUp() {
@@ -70,7 +72,8 @@ public class AppServiceTest {
         this.appVersionService = mock(AppVersionService.class);
         this.uploadedFileManageService = mock(UploadedFileManageService.class);
         this.usrAppCollectionService = mock(UsrAppCollectionService.class);
-        ConverterFactory converterFactory = new ConverterFactory(List.of(new AppVersionToAppDtoConverter()));
+        this.iconConverter = mock(IconConverter.class);
+        ConverterFactory converterFactory = new ConverterFactory(List.of(new AppVersionToAppDtoConverter(iconConverter)));
         this.appDomainService = new AppDomainServiceImpl(this.appFactory, this.appVersionService,
                 this.uploadedFileManageService, this.usrAppCollectionService, converterFactory, StringUtils.EMPTY);
     }

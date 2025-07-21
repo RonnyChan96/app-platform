@@ -1109,7 +1109,10 @@ public class AppVersion {
         }
     }
 
-    private void processIconPath() {
+    /**
+     * 处理图标路径转换，将存储路径转换为前端可访问的URL路径。
+     */
+    public void processIconPath() {
         if (!this.attributes.containsKey("icon")) {
             return;
         }

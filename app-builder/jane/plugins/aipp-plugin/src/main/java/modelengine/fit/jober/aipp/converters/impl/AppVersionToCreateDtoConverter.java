@@ -6,7 +6,9 @@
 
 package modelengine.fit.jober.aipp.converters.impl;
 
+import lombok.RequiredArgsConstructor;
 import modelengine.fit.jober.aipp.converters.EntityConverter;
+import modelengine.fit.jober.aipp.converters.IconConverter;
 import modelengine.fit.jober.aipp.domains.appversion.AppVersion;
 import modelengine.fit.jober.aipp.dto.AppBuilderAppCreateDto;
 
@@ -22,7 +24,10 @@ import java.util.Optional;
  * @since 2025-02-18
  */
 @Component
+@RequiredArgsConstructor
 public class AppVersionToCreateDtoConverter implements EntityConverter {
+    private final IconConverter iconConverter;
+
     @Override
     public Class<AppVersion> source() {
         return AppVersion.class;
@@ -40,7 +45,7 @@ public class AppVersionToCreateDtoConverter implements EntityConverter {
                 .map(s -> AppBuilderAppCreateDto.builder()
                         .name(s.getData().getName())
                         .description(s.getDescription())
-                        .icon(s.getIcon())
+                        .icon(this.iconConverter.toFrontend(s.getIcon()))
                         .greeting(s.getGreeting())
                         .appType(s.getData().getAppType())
                         .type(s.getData().getType())

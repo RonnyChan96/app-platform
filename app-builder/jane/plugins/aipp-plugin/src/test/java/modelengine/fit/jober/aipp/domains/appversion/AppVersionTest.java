@@ -178,8 +178,8 @@ public class AppVersionTest {
         this.iconConverter = mock(IconConverter.class);
         ConverterFactory converterFactory = new ConverterFactory(
                 List.of(new AppExportToAppPoConverter(), new AppConfigToExportConfigConverter(),
-                        new AppGraphToExportGraphConverter(), new AppVersionToExportAppConverter(),
-                        new AppVersionToTemplateConverter()));
+                        new AppGraphToExportGraphConverter(), new AppVersionToExportAppConverter(iconConverter),
+                        new AppVersionToTemplateConverter(iconConverter)));
         this.factory = new AppVersionFactory(this.formPropertyRepository,
                 this.appTaskService,
                 this.configRepository,
