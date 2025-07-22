@@ -14,18 +14,18 @@ package modelengine.fit.jober.aipp.converters;
  */
 public interface IconConverter {
     /**
-     * 从数据库中读出iconValue后去除/v1/api前面的前缀。
+     * 从数据库中读出iconValue后添加前端直接调用前缀。
      *
      * @param storedValue 数据库中存的值的 {@link String}。
-     * @return 修改后的值的 {@link String}。
+     * @return 补充前端直接调用前缀后的值的 {@link String}。
      */
     String toFrontend(String storedValue);
 
     /**
-     * 从前端传入的iconValue中去除/v1/api前面的前缀后落库。
+     * 从前端传入的iconValue中截取文件名部分后落库。
      *
      * @param frontendValue 前端传入的值的 {@link String}。
-     * @return 去除前缀后的值的 {@link String}。
+     * @return 截取文件名部分后的值的 {@link String}。
      */
     String toStorage(String frontendValue);
 }
