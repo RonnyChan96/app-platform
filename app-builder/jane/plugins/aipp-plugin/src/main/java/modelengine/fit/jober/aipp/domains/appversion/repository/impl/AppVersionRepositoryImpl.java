@@ -15,7 +15,6 @@ import modelengine.fit.jober.aipp.domains.appversion.repository.AppVersionReposi
 import modelengine.fit.jober.aipp.domains.appversion.serializer.AppVersionSerializer;
 import modelengine.fit.jober.aipp.enums.AippSortKeyEnum;
 import modelengine.fit.jober.aipp.mapper.AppBuilderAppMapper;
-
 import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.util.StringUtils;
 
@@ -48,7 +47,7 @@ public class AppVersionRepositoryImpl implements AppVersionRepository {
     @Override
     public void update(AppVersion appVersion) {
         this.mapper.updateOne(this.serializer.serialize(appVersion));
-        appVersion.processIconPath();
+        Optional.ofNullable(appVersion).ifPresent(AppVersion::processIconPath);
     }
 
     @Override
@@ -64,7 +63,7 @@ public class AppVersionRepositoryImpl implements AppVersionRepository {
     @Override
     public void save(AppVersion appVersion) {
         this.mapper.insertOne(this.serializer.serialize(appVersion));
-        appVersion.processIconPath();
+        Optional.ofNullable(appVersion).ifPresent(AppVersion::processIconPath);
     }
 
     @Override

@@ -205,7 +205,7 @@ public class AppVersion {
                 ? new HashMap<>()
                 : JsonUtils.parseObject(data.getAttributes());
         this.iconConverter = dependencies.getIconConverter();
-        processIconPath();
+        this.processIconPath();
         this.formPropertyRepository = dependencies.getFormPropertyRepository();
         this.appTaskService = dependencies.getAppTaskService();
         this.configRepository = dependencies.getConfigRepository();
@@ -901,7 +901,7 @@ public class AppVersion {
         this.data.setName(newName);
 
         this.attributes = AppImExportUtil.resetAppAttributes(JsonUtils.parseObject(this.data.getAttributes()));
-        processIconPath();
+        this.processIconPath();
         this.config = AppImExportUtil.convertToAppBuilderConfig(appDto.getConfig(), context);
         this.flowGraph = AppImExportUtil.convertToAppBuilderFlowGraph(appDto.getFlowGraph(), context);
         this.formProperties = AppImExportUtil.getFormProperties(this.config.getConfigProperties());

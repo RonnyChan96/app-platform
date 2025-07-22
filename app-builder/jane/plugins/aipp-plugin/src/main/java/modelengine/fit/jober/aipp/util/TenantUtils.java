@@ -13,7 +13,6 @@ package modelengine.fit.jober.aipp.util;
  * @since 2025-07-22
  */
 public class TenantUtils {
-
     /**
      * 获取默认租户唯一标识。
      *
