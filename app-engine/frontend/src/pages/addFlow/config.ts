@@ -67,6 +67,12 @@ export const configMap = {
         urls: { knowledgeUrl: `` }
       },
       {
+        node: "knowledgeRetrievalNodeState",
+        urls: {
+          llmModelEndpoint: `${baseUrl}/v1/api`
+        }
+      },
+      {
         node: "fitInvokeState",
         urls: {
           serviceListEndpoint: "",
@@ -162,6 +168,12 @@ export const configMap = {
         node: "knowledgeState",
         urls: {
           knowledgeUrl: `${baseUrl}/v1/api/${TENANT_ID}/knowledge?pageNum=1&pageSize=10`
+        }
+      },
+      {
+        node: "knowledgeRetrievalNodeState",
+        urls: {
+          llmModelEndpoint: `${baseUrl}/v1/api`
         }
       },
       {
