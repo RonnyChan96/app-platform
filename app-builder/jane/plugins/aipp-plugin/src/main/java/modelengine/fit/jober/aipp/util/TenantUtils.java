@@ -4,22 +4,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-package modelengine.fit.jober.aipp.constant;
+package modelengine.fit.jober.aipp.util;
 
 /**
- * 表示 Aipp 使用的常量。
+ * 租户工具类。
  *
- * @author 兰宇晨
- * @since 2025-01-06
+ * @author 陈镕希
+ * @since 2025-07-22
  */
-public class AippConstant {
-    /**
-     * NAS 共享目录。
-     */
-    public static final String NAS_SHARE_DIR = "/var/share";
+public class TenantUtils {
 
     /**
-     * 下载文件的 uri 路径前缀（包含租户ID占位符）。
+     * 获取默认租户唯一标识。
+     *
+     * @return 默认租户唯一标识的 {@link String}。
      */
-    public static final String DOWNLOAD_FILE_ORIGIN = "/v1/api/%s/file?";
+    public static String getDefaultTenantId() {
+        return "31f20efc7e0848deab6a6bc10fc3021e";
+    }
 }

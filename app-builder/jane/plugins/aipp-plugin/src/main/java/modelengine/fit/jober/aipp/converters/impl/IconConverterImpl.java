@@ -10,6 +10,7 @@ import static modelengine.fit.jober.aipp.constant.AippConstant.DOWNLOAD_FILE_ORI
 import static modelengine.fit.jober.aipp.constant.AippConstant.NAS_SHARE_DIR;
 
 import modelengine.fit.jober.aipp.converters.IconConverter;
+import modelengine.fit.jober.aipp.util.TenantUtils;
 import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.annotation.Value;
 import modelengine.fitframework.util.StringUtils;
@@ -62,7 +63,8 @@ public class IconConverterImpl implements IconConverter {
     }
 
     private String buildFileUrl(String fileName) {
-        return this.contextRoot + DOWNLOAD_FILE_ORIGIN + FILE_PATH_PARAM + NAS_SHARE_DIR + "/" + fileName
+        String originWithTenant = String.format(DOWNLOAD_FILE_ORIGIN, TenantUtils.getDefaultTenantId());
+        return this.contextRoot + originWithTenant + FILE_PATH_PARAM + NAS_SHARE_DIR + "/" + fileName
                 + FILE_NAME_PARAM + fileName;
     }
 }
