@@ -84,7 +84,7 @@ public class UserModelConfigService implements UserModelConfig {
                     .modelName(model != null ? model.getName() : null)
                     .baseUrl(model != null ? model.getBaseUrl() : null)
                     .isDefault(userModel.getIsDefault())
-                    .type(userModel.getType())
+                    .type(model != null ? model.getType() : null)
                     .build();
         }).collect(Collectors.toList());
     }
@@ -105,7 +105,7 @@ public class UserModelConfigService implements UserModelConfig {
                 .name(modelName)
                 .tag(modelId)
                 .baseUrl(baseUrl)
-                .type(ModelType.valueOf(type).value())
+                .type(ModelType.from(type).value())
                 .createdBy(userId)
                 .updatedBy(userId)
                 .build();
@@ -115,7 +115,6 @@ public class UserModelConfigService implements UserModelConfig {
                 .userId(userId)
                 .modelId(modelId)
                 .apiKey(apiKey)
-                .type(type)
                 .isDefault(hasDefault ? 0 : 1)
                 .createdBy(userId)
                 .updatedBy(userId)
