@@ -18,6 +18,7 @@ import modelengine.fitframework.annotation.Fit;
 import modelengine.fitframework.log.Logger;
 import modelengine.fitframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,9 @@ public class CustomAippModelCenter implements AippModelCenterExtension {
         LOG.info("[Custom][fetchModelList] operator={}, type={}, scene={}.", context.getOperator(), type, scene);
         List<ModelPo> modelList = this.userModelRepo.listModelsByUserId(context.getOperator(), type);
         if (CollectionUtils.isEmpty(modelList)) {
+            if (this.defaultModelCenter == null) {
+                return ModelListDto.builder().models(Collections.emptyList()).total(0).build();
+            }
             return this.defaultModelCenter.fetchModelList(type, scene, context);
         }
         // 这里自定义按照用户分类返回数据的tag需要特殊处理，tag中额外存入用户信息，先快速打通功能，赶上320。格式："tag,userId"
