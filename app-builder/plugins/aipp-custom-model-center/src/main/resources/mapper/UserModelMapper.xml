@@ -68,8 +68,8 @@
     </select>
 
     <insert id="insertUserModel" parameterType="modelengine.fit.jade.aipp.model.po.UserModelPo">
-        INSERT INTO t_app_engine_user_model (user_id, model_id, api_key, is_default, created_by, updated_by)
-        VALUES (#{userId}, #{modelId}, #{apiKey}, #{isDefault}, #{createdBy}, #{updatedBy})
+        INSERT INTO t_app_engine_user_model (user_id, model_id, api_key, is_default, created_by, updated_by, type)
+        VALUES (#{userId}, #{modelId}, #{apiKey}, #{isDefault}, #{createdBy}, #{updatedBy}, #{type})
     </insert>
 
     <delete id="deleteByModelId">
