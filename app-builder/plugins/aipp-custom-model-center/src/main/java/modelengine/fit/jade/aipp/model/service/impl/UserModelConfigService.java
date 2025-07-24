@@ -84,6 +84,7 @@ public class UserModelConfigService implements UserModelConfig {
                     .modelName(model != null ? model.getName() : null)
                     .baseUrl(model != null ? model.getBaseUrl() : null)
                     .isDefault(userModel.getIsDefault())
+                    .type(userModel.getType())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -114,6 +115,7 @@ public class UserModelConfigService implements UserModelConfig {
                 .userId(userId)
                 .modelId(modelId)
                 .apiKey(apiKey)
+                .type(type)
                 .isDefault(hasDefault ? 0 : 1)
                 .createdBy(userId)
                 .updatedBy(userId)

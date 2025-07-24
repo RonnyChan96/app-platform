@@ -23,6 +23,7 @@ public class UserModelPo extends BasePo {
     private String modelId;
     private String apiKey;
     private int isDefault;
+    private String type;
 
     /**
      * 用于构建 {@link UserModelPo} 实例的构建器类。
@@ -71,6 +72,17 @@ public class UserModelPo extends BasePo {
          */
         public Builder isDefault(int isDefault) {
             this.instance.setIsDefault(isDefault);
+            return this;
+        }
+
+        /**
+         * 设置模型类型。
+         *
+         * @param type 表示模型类型的 {@link String}。
+         * @return {@link Builder} 构建器本身。
+         */
+        public Builder type(String type) {
+            this.instance.setType(type);
             return this;
         }
 
