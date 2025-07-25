@@ -14,7 +14,7 @@
         created_at, user_id, model_id, api_key, is_default
     </sql>
 
-    <select id="listUserModels" resultType="modelengine.fit.jade.aipp.model.po.UserModelPo" resultMap="BaseResultMap">
+    <select id="listUserModels" resultMap="BaseResultMap">
         SELECT
             u.created_at,
             u.user_id,
@@ -32,7 +32,7 @@
             </if>
     </select>
 
-    <select id="getDefault" resultType="modelengine.fit.jade.aipp.model.po.UserModelPo" resultMap="BaseResultMap">
+    <select id="getDefault" resultMap="BaseResultMap">
         SELECT
             u.created_at,
             u.user_id,
