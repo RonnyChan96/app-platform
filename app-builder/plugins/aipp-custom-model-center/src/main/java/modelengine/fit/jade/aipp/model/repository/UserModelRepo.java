@@ -98,10 +98,9 @@ public interface UserModelRepo {
      *
      * @param userId 表示用户标识的 {@link String}。
      * @param modelId 表示要设置为默认的模型标识的 {@link String}。
-     * @param type 表示模型类型的 {@link String}。
      * @return 受影响的记录行数的 {@code int}。
      */
-    int switchDefaultUserModel(String userId, String modelId, String type);
+    int switchDefaultUserModel(String userId, String modelId);
 
     /**
      * 根据模型标识查询模型信息。

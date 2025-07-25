@@ -16,11 +16,7 @@
 
     <select id="listUserModels" resultMap="BaseResultMap">
         SELECT
-            u.created_at,
-            u.user_id,
-            u.model_id,
-            u.api_key,
-            u.is_default
+            u.id, u.created_at, u.user_id, u.model_id, u.api_key, u.is_default
         FROM
             t_app_engine_user_model u
         JOIN
@@ -85,21 +81,8 @@
     </select>
 
     <update id="setDefault" parameterType="map">
-        UPDATE t_app_engine_user_model u
-        <if test="type != null">
-            JOIN t_app_engine_model m ON u.model_id = m.model_id
-        </if>
-        SET u.is_default = CASE
-            WHEN u.model_id = #{modelId}
-            <if test="type != null">
-                AND m.type = #{type}
-            </if>
-            THEN 1
-            ELSE 0
-        END
+        UPDATE t_app_engine_user_model
+        SET is_default = CASE WHEN model_id = #{modelId} THEN 1 ELSE 0 END
         WHERE user_id = #{userId}
-        <if test="type != null">
-            AND m.type = #{type}
-        </if>
     </update>
 </mapper>
