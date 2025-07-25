@@ -98,7 +98,8 @@ public class UserModelConfigService implements UserModelConfig {
     public String addUserModel(String userId, String apiKey, String modelName, String baseUrl, String type) {
         log.info("start add user model for {}.", userId);
         String modelId = UUID.randomUUID().toString().replace("-", "");
-        boolean hasDefault = this.userModelRepo.hasDefaultModel(userId, type);
+        // 此处已讨论，暂时只保持全局只有一个默认模型的设定
+        boolean hasDefault = this.userModelRepo.hasDefaultModel(userId, null);
 
         ModelPo modelPo = ModelPo.builder()
                 .modelId(modelId)
