@@ -73,6 +73,5 @@ public interface UserModelConfig {
     @ToolMethod(name = "switch_default_model", description = "将指定模型设置为用户的默认模型")
     @Genericable(id = "modelengine.fit.jade.aipp.model.service.switchDefaultModel")
     String switchDefaultModel(@Property(description = "用户id", required = true) String userId,
-            @Property(description = "默认模型id", required = true) String modelId,
-            @Property(description = "模型类型", required = false) String type);
+            @Property(description = "默认模型id", required = true) String modelId);
 }

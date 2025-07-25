@@ -28,7 +28,7 @@ public interface UserModelMapper {
      * @param type 表示模型类型的 {@link String}。
      * @return 用户模型关系列表的 {@link List}{@code <}{@link UserModelPo}{@code >}。
      */
-    List<UserModelPo> listUserModels(String userId, String type);
+    List<UserModelPo> listUserModels(@Param("userId") String userId, @Param("type") String type);
 
     /**
      * 根据用户标识获取默认用户模型关系。
@@ -76,8 +76,7 @@ public interface UserModelMapper {
      *
      * @param userId 表示用户标识的 {@link String}。
      * @param modelId 表示需设为默认的模型标识的 {@link String}。
-     * @param type 表示模型类型的 {@link String}。
      * @return 成功更新的记录条数的 {@code int}。
      */
-    int setDefault(@Param("userId") String userId, @Param("modelId") String modelId, @Param("type") String type);
+    int setDefault(@Param("userId") String userId, @Param("modelId") String modelId);
 }

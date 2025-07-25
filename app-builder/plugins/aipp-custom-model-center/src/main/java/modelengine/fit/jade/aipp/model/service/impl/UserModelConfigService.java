@@ -159,8 +159,7 @@ public class UserModelConfigService implements UserModelConfig {
                     .orElse(null);
 
             if (latestUserModel != null) {
-                this.userModelRepo.switchDefaultUserModel(userId, latestUserModel.getModelId(),
-                        latestUserModel.getType());
+                this.userModelRepo.switchDefaultUserModel(userId, latestUserModel.getModelId());
                 return String.format("删除默认模型成功，已将%s设为默认模型。", latestUserModel.getName());
             }
         }
@@ -173,9 +172,9 @@ public class UserModelConfigService implements UserModelConfig {
             @Attribute(key = "tags", value = "FIT"), @Attribute(key = "tags", value = "MODEL")
     })
     @Property(description = "将指定模型设置为用户的默认模型")
-    public String switchDefaultModel(String userId, String modelId, String type) {
+    public String switchDefaultModel(String userId, String modelId) {
         log.info("start switch default model for {}.", userId);
-        int rows = this.userModelRepo.switchDefaultUserModel(userId, modelId, type);
+        int rows = this.userModelRepo.switchDefaultUserModel(userId, modelId);
         if (rows == 0) {
             return "未查到对应模型。";
         }
