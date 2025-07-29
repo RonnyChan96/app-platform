@@ -8,6 +8,7 @@ package modelengine.jade.knowledge.util;
 
 import modelengine.jade.knowledge.KnowledgeProperty;
 import modelengine.jade.knowledge.entity.RetrieverOption;
+import modelengine.jade.knowledge.entity.RetrieverServiceOption;
 import modelengine.jade.knowledge.enums.IndexType;
 
 import java.util.Collections;
@@ -29,7 +30,7 @@ public class RetrieverServiceUtils {
         retrieverOption.setApiKey("apiKey");
         retrieverOption.setRepoIds(Collections.singletonList("repoId"));
         retrieverOption.setIndexType(new KnowledgeProperty.IndexInfo(IndexType.SEMANTIC, "name", "description"));
-        retrieverOption.setRerankParam(new RetrieverOption.RerankParam(false, "model", "baseUri", 2));
+        retrieverOption.setRerankParam(new RetrieverOption.RerankParam(false, new RetrieverServiceOption.ModelAccessInfo("model", "INTERNAL"), 2));
         return retrieverOption;
     }
 }

@@ -64,18 +64,23 @@ public class RetrieverServiceOption {
         private boolean enableRerank;
 
         /**
-         * 重排模型的名称。
+         * 重排模型的信息。
          */
-        private String model;
-
-        /**
-         * 重排模型的资源标识符。
-         */
-        private String baseUri;
+        private ModelAccessInfo accessInfo;
 
         /**
          * 重排后保留最相关的文档数量。
          */
         private Integer topN;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ModelAccessInfo {
+        private String serviceName;
+        private String tag;
+    }
+
+
 }

@@ -6,14 +6,13 @@
 
 package modelengine.jade.knowledge.postprocessor.support;
 
-import modelengine.jade.knowledge.postprocessor.FactoryOption;
-import modelengine.jade.knowledge.postprocessor.PostProcessorFactory;
-
 import modelengine.fel.core.document.DocumentPostProcessor;
 import modelengine.fel.core.document.support.RerankDocumentProcessor;
 import modelengine.fel.core.document.support.postprocessor.RrfPostProcessor;
-import modelengine.fit.http.client.HttpClassicClientFactory;
+import modelengine.fel.core.rerank.RerankModel;
 import modelengine.fitframework.annotation.Component;
+import modelengine.jade.knowledge.postprocessor.FactoryOption;
+import modelengine.jade.knowledge.postprocessor.PostProcessorFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,17 +26,17 @@ import java.util.stream.Stream;
  */
 @Component
 public class DefaultPostProcessorFactory implements PostProcessorFactory {
-    private final HttpClassicClientFactory httpClientFactory;
+    private final RerankModel rerankmodel;
 
-    DefaultPostProcessorFactory(HttpClassicClientFactory httpClientFactory) {
-        this.httpClientFactory = httpClientFactory;
+    DefaultPostProcessorFactory(RerankModel rerankmodel) {
+        this.rerankmodel = rerankmodel;
     }
 
     @Override
     public List<DocumentPostProcessor> create(FactoryOption factoryOption) {
         List<DocumentPostProcessor> processors = Stream.of(new RrfPostProcessor()).collect(Collectors.toList());
         if (factoryOption.isEnableRerank()) {
-            processors.add(new RerankDocumentProcessor(this.httpClientFactory, factoryOption.getRerankOption()));
+            processors.add(new RerankDocumentProcessor(factoryOption.getRerankOption(), rerankmodel));
         }
         return processors;
     }
