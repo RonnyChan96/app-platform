@@ -28,7 +28,7 @@ public interface UserModelMapper {
      * @param type 表示模型类型的 {@link String}。
      * @return 用户模型关系列表的 {@link List}{@code <}{@link UserModelPo}{@code >}。
      */
-    List<UserModelPo> listUserModels(@Param("userId") String userId, @Param("type") String type);
+    List<UserModelPo> listUserModels(String userId, String type);
 
     /**
      * 根据用户标识获取默认用户模型关系。
