@@ -10,12 +10,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import modelengine.fel.core.document.MeasurableDocument;
+import modelengine.fit.jade.aipp.model.dto.ModelAccessInfo;
+import modelengine.fit.jade.aipp.model.service.AippModelCenter;
 import modelengine.fitframework.annotation.Fit;
 import modelengine.fitframework.broker.client.Invoker;
 import modelengine.fitframework.test.annotation.FitTestWithJunit;
@@ -23,6 +26,7 @@ import modelengine.fitframework.test.annotation.Mock;
 import modelengine.jade.common.exception.ModelEngineException;
 import modelengine.jade.knowledge.document.KnowledgeDocument;
 import modelengine.jade.knowledge.entity.RetrieverOption;
+import modelengine.jade.knowledge.entity.RetrieverServiceOption;
 import modelengine.jade.knowledge.enums.ReferenceType;
 import modelengine.jade.knowledge.postprocessor.FactoryOption;
 import modelengine.jade.knowledge.postprocessor.PostProcessorFactory;
@@ -62,6 +66,8 @@ public class RetrieverServiceTest {
     @Mock
     private KnowledgeServiceRouter knowledgeServiceRouter;
     @Mock
+    private AippModelCenter aippModelCenter;
+    @Mock
     private Invoker invoker;
 
     @BeforeEach
@@ -70,8 +76,7 @@ public class RetrieverServiceTest {
         when(this.retrieverHandler.handle(anyList(),
                 any())).thenReturn(Collections.singletonList(new MeasurableDocument(document, document.score())));
 
-        when(this.postProcessorFactory.create(any(FactoryOption.class)))
-                .thenReturn(Collections.singletonList(docs -> docs));
+        when(this.postProcessorFactory.create(any(FactoryOption.class))).thenReturn(Collections.singletonList(docs -> docs));
         when(this.knowledgeCenterService.getApiKey(any(), any())).thenReturn("");
     }
 
@@ -95,7 +100,15 @@ public class RetrieverServiceTest {
     void shouldOkWhenRetrieveHandlerWithRerankParam() {
         RetrieverOption retrieverOption = RetrieverServiceUtils.buildRetrieverOption();
         retrieverOption.setReferenceLimit(new ReferenceLimit(ReferenceType.TOP_K, 3));
-        retrieverOption.setRerankParam(new RetrieverOption.RerankParam(true, "model", "baseUri", 2));
+        retrieverOption.setRerankParam(new RetrieverOption.RerankParam(true,
+                new RetrieverServiceOption.ModelAccessInfo("model", "INTERNAL"),
+                2));
+        when(aippModelCenter.getModelAccessInfo(anyString(), anyString(), any())).thenReturn(new ModelAccessInfo(
+                "serviceName",
+                "tag",
+                "baseUrl",
+                "ak",
+                "rearnk"));
         List<KnowledgeDocument> documents = this.retrieverService.invoke("query",
                 Collections.singletonList(new KnowledgeRepoInfo("repoId")),
                 retrieverOption);
@@ -118,8 +131,7 @@ public class RetrieverServiceTest {
 
     @Test
     void shouldOkWhenPostProcessorWithEmptyRsp() {
-        when(this.postProcessorFactory.create(any(FactoryOption.class)))
-                .thenReturn(Collections.singletonList(docs -> Collections.emptyList()));
+        when(this.postProcessorFactory.create(any(FactoryOption.class))).thenReturn(Collections.singletonList(docs -> Collections.emptyList()));
 
         RetrieverOption retrieverOption = RetrieverServiceUtils.buildRetrieverOption();
         retrieverOption.setReferenceLimit(new ReferenceLimit(ReferenceType.TOP_K, 3));
@@ -134,12 +146,12 @@ public class RetrieverServiceTest {
         RetrieverOption retrieverOption = RetrieverServiceUtils.buildRetrieverOption();
         retrieverOption.setReferenceLimit(new ReferenceLimit(ReferenceType.TOP_K, 3));
         assertThatThrownBy(() -> this.retrieverService.invoke(Arrays.asList("query", 0.6F),
-                Collections.singletonList(new KnowledgeRepoInfo("repoId")), retrieverOption)).isInstanceOf(
-                ModelEngineException.class);
+                Collections.singletonList(new KnowledgeRepoInfo("repoId")),
+                retrieverOption)).isInstanceOf(ModelEngineException.class);
 
         assertThatThrownBy(() -> this.retrieverService.invoke(0.5F,
-                Collections.singletonList(new KnowledgeRepoInfo("repoId")), retrieverOption)).isInstanceOf(
-                ModelEngineException.class);
+                Collections.singletonList(new KnowledgeRepoInfo("repoId")),
+                retrieverOption)).isInstanceOf(ModelEngineException.class);
     }
 
     @Test

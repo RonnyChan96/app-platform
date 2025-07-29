@@ -8,9 +8,13 @@ package modelengine.jade.knowledge.service.impl;
 
 import static modelengine.jade.knowledge.code.KnowledgeRetrievalRetCode.INVALID_PARAMETER_TYPE_ERROR;
 
+import modelengine.fel.core.chat.ChatOption;
 import modelengine.fel.core.document.DocumentPostProcessor;
 import modelengine.fel.core.document.MeasurableDocument;
-import modelengine.fel.core.document.support.RerankOption;
+import modelengine.fel.core.model.http.SecureConfig;
+import modelengine.fel.core.rerank.RerankOption;
+import modelengine.fit.jade.aipp.model.dto.ModelAccessInfo;
+import modelengine.fit.jade.aipp.model.service.AippModelCenter;
 import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.annotation.Fitable;
 import modelengine.fitframework.annotation.Value;
@@ -46,6 +50,7 @@ public class RetrieverServiceImpl implements RetrieverService {
     private final PostProcessorFactory postProcessorFactory;
     private final String baseRerankUri;
     private final KnowledgeCenterService knowledgeCenterService;
+    private final AippModelCenter aippModelCenter;
 
     /**
      * 使用检索处理器和文档后处理器初始化 {@link RetrieverServiceImpl} 对象。
@@ -54,13 +59,16 @@ public class RetrieverServiceImpl implements RetrieverService {
      * @param postProcessorFactory 表示文档后处理器工厂的 {@link PostProcessorFactory}。
      * @param baseRerankUri 表示文档重排服务的资源标识符的 {@link String}。
      * @param knowledgeCenterService 表示知识库配置服务的 {@link KnowledgeCenterService}。
+     * @param aippModelCenter 表示模型中心的 {@link AippModelCenter}。
      */
     public RetrieverServiceImpl(RetrieverHandler retrieverHandler, PostProcessorFactory postProcessorFactory,
-            @Value("${openai-urls.internal}") String baseRerankUri, KnowledgeCenterService knowledgeCenterService) {
+            @Value("${openai-urls.internal}") String baseRerankUri, KnowledgeCenterService knowledgeCenterService,
+            AippModelCenter aippModelCenter) {
         this.retrieverHandler = Validation.notNull(retrieverHandler, "The retriever handler cannot be null.");
         this.postProcessorFactory = Validation.notNull(postProcessorFactory, "The factory cannot be null.");
         this.baseRerankUri = Validation.notBlank(baseRerankUri, "The rerank uri cannot be blank.");
         this.knowledgeCenterService = knowledgeCenterService;
+        this.aippModelCenter = aippModelCenter;
     }
 
     @Fitable("knowledge.service.invoke")
@@ -119,10 +127,15 @@ public class RetrieverServiceImpl implements RetrieverService {
         if (!rerankParam.isEnableRerank()) {
             return new FactoryOption(false, null);
         }
+        ModelAccessInfo modelAccessInfo = aippModelCenter.getModelAccessInfo(rerankParam.getAccessInfo().getTag(),
+                rerankParam.getAccessInfo().getServiceName(),
+                null);
         RerankOption rerankOption = RerankOption.custom()
-                .baseUri(ObjectUtils.nullIf(rerankParam.getBaseUri(), this.baseRerankUri))
-                .model(rerankParam.getModel())
+                .baseUri(ObjectUtils.nullIf(modelAccessInfo.getBaseUrl(), this.baseRerankUri))
+                .apiKey(modelAccessInfo.getAccessKey())
+                .model(rerankParam.getAccessInfo().getServiceName())
                 .topN(rerankParam.getTopN())
+                .secureConfig(modelAccessInfo.isSystemModel() ? null : SecureConfig.custom().ignoreTrust(true).build())
                 .query(String.join("\n", query))
                 .build();
         return new FactoryOption(true, rerankOption);

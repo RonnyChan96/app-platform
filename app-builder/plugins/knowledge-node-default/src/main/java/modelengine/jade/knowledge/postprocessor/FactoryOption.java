@@ -8,7 +8,7 @@ package modelengine.jade.knowledge.postprocessor;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import modelengine.fel.core.document.support.RerankOption;
+import modelengine.fel.core.rerank.RerankOption;
 
 /**
  * 文档后置处理器工厂的配置参数。
