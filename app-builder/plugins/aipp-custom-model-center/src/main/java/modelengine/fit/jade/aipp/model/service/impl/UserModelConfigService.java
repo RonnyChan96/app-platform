@@ -144,24 +144,23 @@ public class UserModelConfigService implements UserModelConfig {
         if (target == null) {
             return "删除模型失败，该模型不属于当前用户。";
         }
-        ModelPo deleteModel = userModelRepo.getModel(modelId);
         this.userModelRepo.deleteByModelId(modelId);
         // 如果删除的不是默认模型，直接返回
         if (target.getIsDefault() != 1) {
             return "删除模型成功。";
         }
-        List<ModelPo> sameTypeModelPos = userModelRepo.listModelsByUserId(userId, deleteModel.getType());
-
+        userModels.remove(target);
         // 如果没有默认模型，但还有其他记录，则设置最新创建的为默认
-        if (CollectionUtils.isNotEmpty(sameTypeModelPos)) {
-            ModelPo latestUserModel = sameTypeModelPos.stream()
+        if (CollectionUtils.isNotEmpty(userModels)) {
+            UserModelPo latestUserModel = userModels.stream()
                     .filter(m -> m.getCreatedAt() != null)
-                    .max(Comparator.comparing(ModelPo::getCreatedAt))
+                    .max(Comparator.comparing(UserModelPo::getCreatedAt))
                     .orElse(null);
 
             if (latestUserModel != null) {
                 this.userModelRepo.switchDefaultUserModel(userId, latestUserModel.getModelId());
-                return String.format("删除默认模型成功，已将%s设为默认模型。", latestUserModel.getName());
+                return String.format("删除默认模型成功，已将%s设为默认模型。",
+                        this.userModelRepo.getModel(latestUserModel.getModelId()).getName());
             }
         }
         return "删除模型成功，当前无默认模型。";
