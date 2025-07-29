@@ -81,6 +81,4 @@ public class RetrieverServiceOption {
         private String serviceName;
         private String tag;
     }
-
-
 }
