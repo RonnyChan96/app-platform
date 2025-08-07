@@ -14,6 +14,10 @@ import modelengine.fit.jade.aipp.http.call.command.HttpCallCommandHandler;
 import modelengine.fit.jade.aipp.http.call.command.HttpCallResult;
 import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.annotation.Fitable;
+import modelengine.fitframework.annotation.Value;
+import modelengine.fitframework.log.Logger;
+
+import java.util.List;
 
 /**
  * 表示 {@link HttpCallService} 的 aipp 实现。
@@ -23,16 +27,32 @@ import modelengine.fitframework.annotation.Fitable;
  */
 @Component
 public class AippHttpCallService implements HttpCallService {
+    private static final Logger log = Logger.get(AippHttpCallService.class);
+
     private final HttpCallCommandHandler handler;
 
-    public AippHttpCallService(HttpCallCommandHandler handler) {
+    private List<String> blacklistHttpEndpoints;
+
+    public AippHttpCallService(HttpCallCommandHandler handler,
+            @Value("${blacklist.httpEndpoints:[]}") List<String> blacklistHttpEndpoints) {
         this.handler = handler;
+        this.blacklistHttpEndpoints = blacklistHttpEndpoints;
     }
 
     @Override
     @Fitable("aipp")
     public HttpResult httpCall(HttpRequest request) throws HttpClientException {
         notNull(request, "Http request cannot be null.");
+
+        String url = request.getUrl();
+        if (isInBlacklist(url)) {
+            log.error("The URL is in the blacklist.");
+            HttpResult result = new HttpResult();
+            result.setStatus(-1);
+            result.setErrorMsg("The URL is in the blacklist.");
+            return result;
+        }
+
         HttpCallCommand command = new HttpCallCommand();
         command.setMethod(request.getHttpMethod());
         command.setUrl(request.getUrl());
@@ -48,5 +68,14 @@ public class AippHttpCallService implements HttpCallService {
         result.setErrorMsg(httpCallResult.getErrorMsg());
         result.setData(httpCallResult.getData());
         return result;
+    }
+
+    private boolean isInBlacklist(String url) {
+        for (String endpoint : blacklistHttpEndpoints) {
+            if (url.contains(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
