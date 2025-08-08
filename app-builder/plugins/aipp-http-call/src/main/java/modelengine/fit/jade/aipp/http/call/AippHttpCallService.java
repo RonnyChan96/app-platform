@@ -17,7 +17,6 @@ import modelengine.fitframework.annotation.Fitable;
 import modelengine.fitframework.annotation.Value;
 import modelengine.fitframework.log.Logger;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -46,13 +45,14 @@ public class AippHttpCallService implements HttpCallService {
         notNull(request, "Http request cannot be null.");
 
         String url = request.getUrl();
+        if (url == null || url.trim().isEmpty()) {
+            log.error("Blocked: URL is null or empty.");
+            return createErrorResponse();
+        }
         if (this.isInBlacklist(url)) {
             String baseOnly = this.getBaseUrlSafely(url);
             log.error("Blocked: URL is in the blacklist. Base URL: {}", baseOnly);
-            HttpResult result = new HttpResult();
-            result.setStatus(-1);
-            result.setErrorMsg("Invalid request.");
-            return result;
+            return createErrorResponse();
         }
 
         HttpCallCommand command = new HttpCallCommand();
@@ -73,24 +73,21 @@ public class AippHttpCallService implements HttpCallService {
     }
 
     private String getBaseUrlSafely(String url) {
-        if (url == null || url.trim().isEmpty()) {
-            return "null_or_empty";
+        int queryOrFragmentIndex = Math.min(url.indexOf('?'), url.indexOf('#'));
+        if (queryOrFragmentIndex < 0) {
+            queryOrFragmentIndex = url.length();
         }
-        url = url.trim();
-        int queryOrFragmentIndex = url.length();
-        int q = url.indexOf('?');
-        int f = url.indexOf('#');
-        if (q != -1) queryOrFragmentIndex = Math.min(queryOrFragmentIndex, q);
-        if (f != -1) queryOrFragmentIndex = Math.min(queryOrFragmentIndex, f);
         return url.substring(0, queryOrFragmentIndex);
     }
 
     private boolean isInBlacklist(String url) {
-        for (String endpoint : blacklistHttpEndpoints) {
-            if (url.contains(endpoint)) {
-                return true;
-            }
-        }
-        return false;
+        return blacklistHttpEndpoints.stream().anyMatch(url::contains);
+    }
+
+    private HttpResult createErrorResponse() {
+        HttpResult result = new HttpResult();
+        result.setStatus(-1);
+        result.setErrorMsg("Invalid request.");
+        return result;
     }
 }
