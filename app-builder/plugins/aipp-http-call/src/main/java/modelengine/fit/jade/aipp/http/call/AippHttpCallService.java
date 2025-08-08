@@ -16,6 +16,7 @@ import modelengine.fitframework.annotation.Component;
 import modelengine.fitframework.annotation.Fitable;
 import modelengine.fitframework.annotation.Value;
 import modelengine.fitframework.log.Logger;
+import modelengine.fitframework.util.StringUtils;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class AippHttpCallService implements HttpCallService {
         notNull(request, "Http request cannot be null.");
 
         String url = request.getUrl();
-        if (url == null || url.trim().isEmpty()) {
+        if (StringUtils.isBlank(url)) {
             log.error("Blocked: URL is null or empty.");
             return createErrorResponse();
         }
