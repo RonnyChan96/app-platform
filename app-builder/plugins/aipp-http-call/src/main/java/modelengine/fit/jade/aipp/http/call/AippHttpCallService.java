@@ -47,8 +47,8 @@ public class AippHttpCallService implements HttpCallService {
 
         String url = request.getUrl();
         if (this.isInBlacklist(url)) {
-            String sanitizedUrl = this.sanitizeUrlForLog(url);
-            log.error("Blocked: URL is in the blacklist. Requested URL: {}", sanitizedUrl);
+            String baseOnly = this.getBaseUrlSafely(url);
+            log.error("Blocked: URL is in the blacklist. Base URL: {}", baseOnly);
             HttpResult result = new HttpResult();
             result.setStatus(-1);
             result.setErrorMsg("Invalid request.");
@@ -72,15 +72,17 @@ public class AippHttpCallService implements HttpCallService {
         return result;
     }
 
-    private String sanitizeUrlForLog(String url) {
-        try {
-            URI uri = new URI(url);
-            return uri.getScheme() + "://" + uri.getHost() +
-                    (uri.getPort() != -1 ? ":" + uri.getPort() : "") +
-                    uri.getPath();
-        } catch (Exception e) {
-            return "redacted";
+    private String getBaseUrlSafely(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return "null_or_empty";
         }
+        url = url.trim();
+        int queryOrFragmentIndex = url.length();
+        int q = url.indexOf('?');
+        int f = url.indexOf('#');
+        if (q != -1) queryOrFragmentIndex = Math.min(queryOrFragmentIndex, q);
+        if (f != -1) queryOrFragmentIndex = Math.min(queryOrFragmentIndex, f);
+        return url.substring(0, queryOrFragmentIndex);
     }
 
     private boolean isInBlacklist(String url) {
