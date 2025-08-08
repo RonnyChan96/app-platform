@@ -17,6 +17,7 @@ import modelengine.fitframework.annotation.Fitable;
 import modelengine.fitframework.annotation.Value;
 import modelengine.fitframework.log.Logger;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -45,11 +46,12 @@ public class AippHttpCallService implements HttpCallService {
         notNull(request, "Http request cannot be null.");
 
         String url = request.getUrl();
-        if (isInBlacklist(url)) {
-            log.error("The URL is in the blacklist.");
+        if (this.isInBlacklist(url)) {
+            String sanitizedUrl = this.sanitizeUrlForLog(url);
+            log.error("Blocked: URL is in the blacklist. Requested URL: {}", sanitizedUrl);
             HttpResult result = new HttpResult();
             result.setStatus(-1);
-            result.setErrorMsg("The URL is in the blacklist.");
+            result.setErrorMsg("Invalid request.");
             return result;
         }
 
@@ -68,6 +70,17 @@ public class AippHttpCallService implements HttpCallService {
         result.setErrorMsg(httpCallResult.getErrorMsg());
         result.setData(httpCallResult.getData());
         return result;
+    }
+
+    private String sanitizeUrlForLog(String url) {
+        try {
+            URI uri = new URI(url);
+            return uri.getScheme() + "://" + uri.getHost() +
+                    (uri.getPort() != -1 ? ":" + uri.getPort() : "") +
+                    uri.getPath();
+        } catch (Exception e) {
+            return "redacted";
+        }
     }
 
     private boolean isInBlacklist(String url) {
