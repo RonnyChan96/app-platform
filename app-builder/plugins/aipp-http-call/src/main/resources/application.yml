@@ -4,4 +4,4 @@ fit:
       - 'modelengine.fit.jade.aipp.http.call'
 
 blacklist:
-  httpEndpoints: ${BLACKLIST_ENDPOINTS:}
+  httpEndpoints: []
