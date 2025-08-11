@@ -66,7 +66,7 @@ public class AippHttpCallServiceTest {
 
         // then
         Assertions.assertEquals(-1, result.getStatus());
-        Assertions.assertEquals("The URL is in the blacklist.", result.getErrorMsg());
+        Assertions.assertEquals("Invalid request.", result.getErrorMsg());
     }
 
     private static HttpRequest constructHttpRequest(String url) {
