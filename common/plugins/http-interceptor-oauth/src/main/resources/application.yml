@@ -1,0 +1,11 @@
+fit:
+  beans:
+    packages:
+    - 'modelengine.jade.common.filter'
+
+filter:
+  static-resource-filter: 'enable'
+
+authorization-server:
+  jwks-url: ${OAUTH_JWK_ENDPOINT:http://94.74.106.78/oauth2/jwks}
+  auth-url: ${OAUTH_AUTH_URL:http://94.74.106.78/#/login?response_type=code&client_id=app-platform&redirect_uri=http://127.0.0.1:8004/v1/api/auth/callback&scope=read}
