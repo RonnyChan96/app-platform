@@ -1,5 +1,6 @@
 .layout-sider {
   z-index: 1;
+  background: #f0f4f9 !important;
 
   &-header {
     display: flex;
@@ -31,4 +32,8 @@
     top: 16px;
     cursor: pointer;
   }
+}
+
+.menu {
+  background: transparent !important;
 }

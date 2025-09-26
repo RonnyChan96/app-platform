@@ -130,10 +130,9 @@
     .editor-input {
       width: 100%;
       background-color: #fff;
-      border: 1px solid transparent;
+      border: 1px solid #ecedec;
+      border-radius: 8px;
       position: relative;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
       .chat-promet-editor {
         box-sizing: border-box;
         line-height: 1.42;

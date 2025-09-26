@@ -22,7 +22,8 @@ import {
   getMenus,
 } from '../../router/route';
 import { Provider } from 'react-redux';
-import { Icons, KnowledgeIcons } from '../icons/index';
+import { KnowledgeIcons } from '../icons/index';
+import AippIcon from '../../assets/images/aipp-icon.png';
 import store from '@/store/store';
 import { setSpaClassName } from '@/shared/utils/common';
 import { getUser, getOmsUser, getRole, getChatPluginList } from '../../pages/helper';
@@ -129,8 +130,8 @@ const AppLayout: React.FC = () => {
           >
             <div className='layout-sider-header'>
               <div className='layout-sider-content'>
-                <Icons.logo />
-                <span className='layout-sider-title'>ModelEngine</span>
+                <img style={{width: '44px', height: '44px'}} src={AippIcon} alt="Aipp Icon" />
+                {/*<span className='layout-sider-title'>ModelEngine</span>*/}
               </div>
               <MenuFoldOutlined
                 style={{ color: '#6d6e72' }}
@@ -139,7 +140,7 @@ const AppLayout: React.FC = () => {
             </div>
             <Menu
               className='menu'
-              theme='dark'
+              theme='light'
               selectedKeys={defaultActive}
               mode='inline'
               items={items}

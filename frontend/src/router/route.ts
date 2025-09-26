@@ -36,7 +36,7 @@ export const routeList: MenuItem[] = [
   {
     key: '/home',
     icon: Icons.home({}),
-    label: i18n.t('homepage'),
+    label: i18n.t('newConversation'),
     component: ChatHome
   },
   {
@@ -49,7 +49,7 @@ export const routeList: MenuItem[] = [
   {
     key: '/app',
     icon: Icons.app({}),
-    label: i18n.t('applicationMarket'),
+    label: i18n.t('explore'),
     component: Apps,
     children: [
       {
@@ -64,7 +64,7 @@ export const routeList: MenuItem[] = [
   {
     key: '/app-develop',
     icon: Icons.app({}),
-    label: i18n.t('appDevelopment'),
+    label: i18n.t('workbench'),
     component: AppDev,
     children: [
       {
@@ -111,6 +111,7 @@ export const routeList: MenuItem[] = [
     icon: Icons.app({}),
     label: i18n.t('intelligentForm'),
     component: IntelligentForm,
+    hidden:true,
     children: [],
   },
   {
@@ -118,6 +119,7 @@ export const routeList: MenuItem[] = [
     icon: Icons.app({}),
     label: i18n.t('plugin'),
     component: Plugin,
+    hidden:true,
     children: [
       {
         key: '/plugin/detail/:pluginId',

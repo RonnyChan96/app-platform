@@ -21,13 +21,7 @@ import StarApps from '../../star-apps';
 import ConversationConfiguration from './conversation-configuration';
 import HistoryChatDrawer from '../../history-chat';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
-import {
-  setAtChatId,
-  setChatId,
-  setChatList,
-  setChatRunning,
-  setOpenStar
-} from '@/store/chatStore/chatStore';
+import { setAtChatId, setChatId, setChatList, setChatRunning, setOpenStar, setShowChatHistory } from '@/store/chatStore/chatStore';
 import { setAtAppInfo, setAtAppId } from '@/store/appInfo/appInfo';
 import { getAppInfo } from '@/shared/http/aipp';
 import { setUseMemory } from '@/store/common/common';
@@ -282,17 +276,17 @@ const EditorBtnHome = (props) => {
               <div className='inner-item'>
                 <NotificationIcon onClick={announcementsClick} />
                 {!isDebug && <HistoryIcon onClick={historyChatClick} />}
-                {<div className='multi-conversation-title'>
-                  <span>{t('multiTurnConversation')}</span>
-                  <Switch
-                    className='multi-conversation-switch'
-                    disabled={showMask}
-                    size='small'
-                    checked={useMemory}
-                    onChange={onMultiConverChange}
-                  />
-                </div>
-                }
+                {/*{<div className='multi-conversation-title'>*/}
+                {/*  <span>{t('multiTurnConversation')}</span>*/}
+                {/*  <Switch*/}
+                {/*    className='multi-conversation-switch'*/}
+                {/*    disabled={showMask}*/}
+                {/*    size='small'*/}
+                {/*    checked={useMemory}*/}
+                {/*    onChange={onMultiConverChange}*/}
+                {/*  />*/}
+                {/*</div>*/}
+                {/*}*/}
                 {!showMask &&
                   <Tooltip
                     title={<span style={{ color: '#4d4d4d' }}>{t('newChat')}</span>}
