@@ -23,7 +23,7 @@ import {
 } from '../../router/route';
 import { Provider } from 'react-redux';
 import { KnowledgeIcons } from '../icons/index';
-import AippIcon from '../../assets/images/aipp-icon.png';
+import AidoIcon from '../../assets/images/aido-icon.png';
 import { store } from '@/store';
 import { setSpaClassName, updateChatId } from '@/shared/utils/common';
 import { getUser, getOmsUser, getRole, getChatPluginList } from '../../pages/helper';
@@ -70,6 +70,7 @@ const HistorySidebarWithContext: React.FC = () => {
  */
 const AppLayout: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [defaultActive, setDefaultActive] = useState<string[]>([])
   const navigate = useHistory().push;
   const location = useLocation();
@@ -194,38 +195,55 @@ const AppLayout: React.FC = () => {
           <>
             <Sider
               collapsible
-              collapsed={false}
+              collapsed={isCollapsed}
               onCollapse={() => setShowMenu(false)}
               trigger={null}
-              width={showMenu ? 280 : 0}
-              className='layout-sider'
+              width={showMenu ? (isCollapsed ? 80 : 280) : 0}
+              className={`layout-sider ${isCollapsed ? 'collapsed' : ''}`}
             >
               <div className='layout-sider-header'>
                 <div className='layout-sider-content'>
-                  <img style={{width: '44px', height: '44px'}} src={AippIcon} alt="Aipp Icon" />
-                  {/*<span className='layout-sider-title'>ModelEngine</span>*/}
+                  <img 
+                    style={{width: '44px', height: '44px', objectFit: 'contain'}} 
+                    src={AidoIcon} 
+                    alt="Aido Icon" 
+                    className={`project-icon ${isCollapsed ? 'collapsed' : ''}`}
+                  />
                 </div>
                 <MenuFoldOutlined
+                  className={`collapse-icon ${isCollapsed ? 'collapsed' : ''}`}
                   style={{ color: '#6d6e72' }}
-                  onClick={() => setShowMenu(false)}
+                  onClick={() => {
+                    if (isCollapsed) {
+                      setIsCollapsed(false);
+                    } else {
+                      setIsCollapsed(true);
+                    }
+                  }}
                 />
               </div>
               <Menu
-                className='menu'
+                className={`menu ${isCollapsed ? 'collapsed' : ''}`}
                 theme='light'
                 selectedKeys={defaultActive}
                 mode='inline'
                 items={items}
                 onClick={menuClick}
               />
-              {shouldShowHistorySidebar() && (
+              {shouldShowHistorySidebar() && !isCollapsed && (
                 <div className='layout-sider-history'>
                   <HistorySidebarWithContext />
                 </div>
               )}
             </Sider>
             <div className='layout-sider-folder'>
-              <KnowledgeIcons.menuFolder onClick={() => setShowMenu(true)} />
+              <KnowledgeIcons.menuFolder onClick={() => {
+                if (isCollapsed) {
+                  setIsCollapsed(false);
+                } else {
+                  setShowMenu(true);
+                }
+              }} />
             </div>
           </>
         )
