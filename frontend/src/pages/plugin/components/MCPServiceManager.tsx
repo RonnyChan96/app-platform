@@ -51,6 +51,7 @@ interface MCPService {
   lastTestTime?: string;
   createTime: string;
   source: 'moda' | 'custom';
+  tools?: any[];
 }
 
 interface MCPServiceManagerProps {
@@ -67,6 +68,91 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
   const [testingServices, setTestingServices] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const getMultiLangText = (value: any, fallback = ''): string => {
+    if (!value) {
+      return fallback;
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'object') {
+      const preferredKeys = ['zh_CN', 'zh_cn', 'zh', 'en_US', 'en_us', 'en'];
+      for (const key of preferredKeys) {
+        if (value[key]) {
+          return value[key];
+        }
+      }
+      const first = Object.values(value).find((val) => typeof val === 'string' && val);
+      if (first) {
+        return first as string;
+      }
+    }
+    return fallback;
+  };
+
+  const formatTimestamp = (value: any): string => {
+    if (!value) {
+      return '';
+    }
+    if (value instanceof Date) {
+      return value.toLocaleString();
+    }
+    if (typeof value === 'number') {
+      const isMilliseconds = value > 1e12;
+      return new Date(isMilliseconds ? value : value * 1000).toLocaleString();
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return '';
+      }
+      const numeric = Number(trimmed);
+      if (!Number.isNaN(numeric)) {
+        const isMilliseconds = trimmed.length >= 13;
+        return new Date(isMilliseconds ? numeric : numeric * 1000).toLocaleString();
+      }
+      return trimmed;
+    }
+    return '';
+  };
+
+  const extractTools = (item: any): any[] => {
+    const tools = item?.tools ?? item?.extension?.tools ?? item?.toolInfos ?? [];
+    return Array.isArray(tools) ? tools : [];
+  };
+
+  const normalizeStatus = (status: any): 'connected' | 'disconnected' => {
+    if (typeof status === 'boolean') {
+      return status ? 'connected' : 'disconnected';
+    }
+    const value = String(status ?? '').toUpperCase();
+    const connectedSet = new Set(['CONNECTED', 'RELEASED', 'ONLINE', 'ACTIVE', 'ENABLED', 'SUCCESS']);
+    return connectedSet.has(value) ? 'connected' : 'disconnected';
+  };
+
+  const mapServiceItem = (item: any): MCPService => {
+    const name = item?.name ?? item?.pluginName ?? item?.extension?.pluginName ?? item?.extension?.name ?? item?.serverIdentifier ?? '未命名MCP服务';
+    const description = getMultiLangText(item?.description, getMultiLangText(item?.extension?.description, name));
+    const endpoint = item?.endpoint ?? item?.serverUrl ?? item?.mcpServerUrl ?? item?.extension?.serverUrl ?? '';
+    const id = item?.id ?? item?.pluginId ?? item?.providerId ?? item?.identifier ?? name;
+    const rawStatus = item?.status ?? item?.deployStatus ?? item?.connectionStatus ?? item?.extension?.status;
+    const createTime = formatTimestamp(item?.updatedAt ?? item?.updateTime ?? item?.modifiedAt ?? item?.extension?.updatedAt);
+    const lastTestTime = formatTimestamp(item?.lastTestTime ?? item?.extension?.lastTestTime);
+    const source = item?.source ?? item?.extension?.source ?? (item?.extension?.type === 'mcp' ? 'moda' : 'custom');
+
+    return {
+      id,
+      name,
+      description,
+      endpoint,
+      status: normalizeStatus(rawStatus),
+      lastTestTime: lastTestTime || undefined,
+      createTime: createTime || new Date().toLocaleString(),
+      source: source === 'custom' ? 'custom' : 'moda',
+      tools: extractTools(item),
+    };
+  };
 
   // 删除本地模拟数据，改为真实接口
 
@@ -113,16 +199,7 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
       console.log('Extracted data array:', dataArray); // 调试日志
       
       // 转换后端数据格式为前端期望的格式
-      const transformedServices = dataArray.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description.en_US,
-        endpoint: item.serverUrl,
-        status: item.deployStatus === 'RELEASED' ? 'connected' : 'disconnected',
-        lastTestTime: undefined,
-        createTime: item.updatedAt,
-        source: 'moda'
-      }));
+      const transformedServices = dataArray.map((item: any) => mapServiceItem(item));
       
       console.log('Transformed services:', transformedServices); // 调试日志
       setServices(transformedServices);
@@ -240,8 +317,8 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
       width: 300,
       ellipsis: true,
       render: (text: string) => (
-        <span style={{ 
-          fontFamily: 'Consolas, Monaco, "Courier New", monospace', 
+        <span style={{
+          fontFamily: 'Consolas, Monaco, "Courier New", monospace',
           fontSize: '12px',
           color: '#1a1a1a'
         }}>{text}</span>
@@ -285,11 +362,11 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
       width: 120,
       align: 'center' as const,
       render: (source: string) => (
-        <Tag 
-          color="default" 
-          style={{ 
-            backgroundColor: '#f5f5f5', 
-            color: '#595959', 
+        <Tag
+          color="default"
+          style={{
+            backgroundColor: '#f5f5f5',
+            color: '#595959',
             border: '1px solid #d9d9d9',
             borderRadius: '4px',
             fontSize: '12px',
@@ -314,8 +391,8 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
             icon={<LinkOutlined />}
             onClick={() => handleTestConnection(record)}
             loading={testingServices.has(record.id)}
-            style={{ 
-              padding: '0 4px', 
+            style={{
+              padding: '0 4px',
               height: 'auto',
               fontSize: '12px',
               color: '#2673e5'
@@ -333,8 +410,8 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
               type="link" 
               danger 
               icon={<DeleteOutlined />}
-              style={{ 
-                padding: '0 4px', 
+              style={{
+                padding: '0 4px',
                 height: 'auto',
                 fontSize: '12px'
               }}
@@ -346,6 +423,81 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
       ),
     },
   ];
+
+  const toolColumns = [
+    {
+      title: '工具名称',
+      key: 'toolName',
+      render: (_: unknown, record: any) => {
+        const toolName = record?.name ?? record?.uniqueName ?? record?.toolName ?? '-';
+        const label = getMultiLangText(record?.label, toolName);
+        const description = getMultiLangText(record?.description, '');
+        return (
+          <div>
+            <div style={{ fontWeight: 500 }}>{label}</div>
+            {description && <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>{description}</div>}
+          </div>
+        );
+      },
+    },
+    {
+      title: '参数',
+      key: 'parameters',
+      render: (record: any) => {
+        const params = Array.isArray(record?.parameters) ? record.parameters : [];
+        if (!params.length) {
+          return <span style={{ color: '#999' }}>无参数</span>;
+        }
+        return (
+          <Space size={[8, 8]} wrap>
+            {params.map((param: any, index: number) => {
+              const paramName = param?.name ?? param?.key ?? `param-${index}`;
+              const paramLabel = getMultiLangText(param?.label, paramName);
+              const required = param?.required ?? param?.isRequired;
+              return (
+                <Tag key={paramName} color={required ? 'blue' : 'default'}>
+                  {paramLabel}{required ? ' *' : ''}
+                </Tag>
+              );
+            })}
+          </Space>
+        );
+      },
+    },
+    {
+      title: '输出类型',
+      key: 'output',
+      width: 160,
+      render: (record: any) => {
+        const output = record?.outputSchema;
+        if (!output || typeof output !== 'object') {
+          return <span style={{ color: '#999' }}>-</span>;
+        }
+        const type = output?.type ?? output?.contentType ?? 'object';
+        return <Tag color="purple">{type}</Tag>;
+      },
+    },
+  ];
+
+  const expandedRowRender = (record: MCPService) => {
+    if (!Array.isArray(record.tools) || record.tools.length === 0) {
+      return <div style={{ color: '#999', padding: '12px 32px' }}>暂无可用工具</div>;
+    }
+    const dataSource = record.tools.map((tool: any, index: number) => ({
+      key: tool?.uniqueName ?? tool?.name ?? `${record.id}-tool-${index}`,
+      ...tool,
+    }));
+    return (
+      <Table
+        columns={toolColumns}
+        dataSource={dataSource}
+        pagination={false}
+        size="small"
+        rowKey="key"
+        style={{ margin: '0 32px 16px' }}
+      />
+    );
+  };
 
   const filteredServices = services.filter(service =>
     (service.name || '').toLowerCase().includes(searchText.toLowerCase()) ||
@@ -368,9 +520,9 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
 
       {/* 添加服务按钮 */}
       <div style={{ marginBottom: '16px' }}>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={handleAddModaService}
           style={{
             height: '32px',
@@ -389,9 +541,18 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
           dataSource={paginatedServices}
           rowKey="id"
           loading={loading}
-          pagination={false}
-          scroll={{ x: 'max-content' }}
-          size="middle"
+          expandable={{
+            expandedRowRender,
+            expandRowByClick: true,
+            rowExpandable: () => true,
+          }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: false,
+            showTotal: (total) => `共${total}个服务`,
+            size: 'small'
+          }}
         />
       </div>
 
@@ -434,6 +595,13 @@ const MCPServiceManager: React.FC<MCPServiceManagerProps> = ({ onServiceSelect }
           }}
         />
       </Modal>
+
+      <style>{`
+        .selected-service {
+          border-color: #1890ff !important;
+          background-color: #f0f8ff;
+        }
+      `}</style>
     </div>
   );
 };
