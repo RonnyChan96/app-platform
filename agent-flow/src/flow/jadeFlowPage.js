@@ -7,6 +7,8 @@
 import {copyPasteHelper, ElsaCopyHandler, page, PAGE_OPERATION_MODE, shapeDataHelper, sleep, uuid} from '@fit-elsa/elsa';
 import {SYSTEM_ACTION, VIRTUAL_CONTEXT_NODE} from '@/common/Consts.js';
 import {conditionRunner, inactiveNodeRunner, standardRunner} from '@/flow/runners.js';
+import {getReachableNodes} from '@/flow/utils/getReachableNodes.js';
+import {isBackwardLink} from '@/components/base/validator.js';
 import {message} from 'antd';
 
 const START_NODE = 'startNodeStart';
@@ -317,9 +319,25 @@ export const jadeFlowPage = (div, graph, name, id) => {
   self.canDragIn = (jadeEvent) => {
     // 当前的线条连接的目标Connector是否已经超出该Connector的最大限制
     const isConnectorWithinLimit = () => {
-      return self.sm.getShapes().filter(s => s.isTypeof('jadeEvent') && s.id !== jadeEvent.id).filter(s => {
+      const targetShape = self.sm.getShapeById(jadeEvent.toShape);
+      const sourceShape = self.sm.getShapeById(jadeEvent.fromShape);
+      
+      // 如果是条件节点的回连，不计入 maxNumToLink 限制
+      const isBackward = sourceShape && targetShape && 
+                         sourceShape.isTypeof('conditionNodeCondition') && 
+                         isBackwardLink(sourceShape, jadeEvent.toShape);
+      
+      if (isBackward) {
+        // 回连允许，不计入限制
+        return true;
+      }
+      
+      // 普通连接需要检查 maxNumToLink 限制
+      const existingConnections = self.sm.getShapes().filter(s => s.isTypeof('jadeEvent') && s.id !== jadeEvent.id).filter(s => {
         return s.toShape === jadeEvent.toShape && s.toShapeConnector === jadeEvent.toShapeConnector;
-      }).length < self.sm.getShapeById(jadeEvent.toShape).maxNumToLink();
+      });
+      
+      return existingConnections.length < targetShape.maxNumToLink();
     };
 
     const isConnectorAllowToLink = () => {
@@ -349,33 +367,10 @@ export const jadeFlowPage = (div, graph, name, id) => {
    * @returns {*} 起始节点所有可达节点的信息
    */
   self.getReachableNodes = (node) => {
-    // 存储所有可达节点的数组
-    const reachableNodes = [];
-
-    // 递归函数，用于遍历节点
-    const traverse = (n) => {
-      // 将当前节点添加到可达节点的列表
-      reachableNodes.push(n);
-
-      // 获取当前节点的下一个节点
-      const nextNodes = n.getNextNodes();
-
-      // 如果没有下一个节点，结束递归
-      if (nextNodes.length === 0) {
-        return;
-      }
-
-      // 遍历每个下一个节点并递归调用 traverse
-      nextNodes.forEach(nextNode => {
-        traverse(nextNode);
-      });
-    };
-
-    // 开始从传入的起始节点遍历
-    traverse(node);
-
-    // 返回所有可达节点的信息
-    return reachableNodes;
+    if (!node) {
+      return [];
+    }
+    return getReachableNodes(node);
   };
 
   /**
@@ -486,12 +481,22 @@ export const jadeFlowPage = (div, graph, name, id) => {
     if (!graph.activePage.isRunning) {
       return;
     }
-    nodes.map(n => {
-      const h = self.createRunner(n);
-      n.ignoreChange(() => {
-        h.refreshRun(dataList);
+    // 防止递归调用
+    if (self._isRefreshing) {
+      console.warn('[jadeFlowPage.refreshRun] 正在刷新中，跳过本次调用以避免递归');
+      return;
+    }
+    self._isRefreshing = true;
+    try {
+      nodes.map(n => {
+        const h = self.createRunner(n);
+        n.ignoreChange(() => {
+          h.refreshRun(dataList);
+        });
       });
-    });
+    } finally {
+      self._isRefreshing = false;
+    }
   };
 
   /**
