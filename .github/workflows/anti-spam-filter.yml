@@ -1,6 +1,16 @@
 name: Anti-Spam Filter
 
 on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (only report, do not delete)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
   issues:
     types: [ opened, edited ]
   pull_request:
