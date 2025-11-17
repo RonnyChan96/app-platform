@@ -92,6 +92,7 @@ public class AppBuilderRecommendServiceImpl implements AppBuilderRecommendServic
                             ? null
                             : SecureConfig.custom().ignoreTrust(true).build())
                     .apiKey(modelAccessInfo.getAccessKey())
+                    .extensions(extensions)
                     .build();
 
             String chatHistory =

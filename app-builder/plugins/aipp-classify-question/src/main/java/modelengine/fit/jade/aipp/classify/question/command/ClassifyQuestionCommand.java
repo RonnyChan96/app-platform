@@ -30,6 +30,11 @@ public class ClassifyQuestionCommand {
     private Map<String, String> args;
 
     /**
+     * 扩展信息。
+     */
+    Map<String, Object> extensions;
+
+    /**
      * 模板，内置模式代表问题背景、自定义模式代表提示词模板。
      */
     private String template;

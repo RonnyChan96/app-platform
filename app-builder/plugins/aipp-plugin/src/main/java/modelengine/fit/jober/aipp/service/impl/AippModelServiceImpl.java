@@ -30,6 +30,7 @@ import modelengine.fitframework.log.Logger;
 import modelengine.fitframework.util.MapBuilder;
 import modelengine.fitframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -58,8 +59,10 @@ public class AippModelServiceImpl implements AippModelService {
     }
 
     @Override
-    public String chat(String model, String tag, Double temperature, String prompt) {
+    public String chat(String model, String tag, Double temperature, String prompt, OperationContext context) {
         ModelAccessInfo modelAccessInfo = this.aippModelCenter.getModelAccessInfo(tag, model, null);
+        Map<String, Object> extensions = new HashMap<>();
+        extensions.put(AippConst.CONTEXT_USER_ID, context.getOperator());
         ChatOption chatOption = ChatOption.custom()
                 .model(model)
                 .baseUrl(modelAccessInfo.getBaseUrl())
@@ -67,6 +70,7 @@ public class AippModelServiceImpl implements AippModelService {
                 .apiKey(modelAccessInfo.getAccessKey())
                 .temperature(temperature)
                 .stream(false)
+                .extensions(extensions)
                 .build();
         ChatMessages chatMessages = new ChatMessages();
         chatMessages.add(new HumanMessage(prompt));

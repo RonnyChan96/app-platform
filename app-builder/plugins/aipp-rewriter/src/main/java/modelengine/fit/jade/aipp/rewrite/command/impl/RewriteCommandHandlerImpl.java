@@ -68,6 +68,7 @@ public class RewriteCommandHandlerImpl implements RewriteCommandHandler {
                 .secureConfig(modelAccessInfo.isSystemModel() ? null : SecureConfig.custom().ignoreTrust(true).build())
                 .apiKey(modelAccessInfo.getAccessKey())
                 .temperature(command.getTemperature())
+                .extensions(command.getExtensions())
                 .stream(false)
                 .build();
         return rewriter.invoke(new RewriteParam(command.getTemplate(), variables, chatOption));

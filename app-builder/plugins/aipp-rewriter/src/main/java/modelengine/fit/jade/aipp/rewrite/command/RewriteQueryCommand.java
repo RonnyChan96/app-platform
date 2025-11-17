@@ -28,6 +28,11 @@ public class RewriteQueryCommand {
     private RewriteStrategy strategy;
 
     /**
+     * 扩展信息。
+     */
+    Map<String, Object> extensions;
+
+    /**
      * 输入参数，必须包含 query。
      */
     private Map<String, String> args;

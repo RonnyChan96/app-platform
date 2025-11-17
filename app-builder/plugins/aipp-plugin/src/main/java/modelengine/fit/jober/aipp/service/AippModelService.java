@@ -17,15 +17,16 @@ import modelengine.fit.jober.aipp.dto.model.PromptGenerateDto;
  */
 public interface AippModelService {
     /**
-     * 聊天接口.
+     * 聊天接口。
      *
-     * @param model 模型名称.
-     * @param tag 模型标签.
-     * @param temperature 温度.
-     * @param prompt 提示词.
-     * @return {@link String} 大模型返回值.
+     * @param model 模型名称。
+     * @param tag 模型标签。
+     * @param temperature 温度。
+     * @param prompt 提示词。
+     * @param context 调用者的上下文数据。
+     * @return {@link String} 大模型返回值。
      */
-    String chat(String model, String tag, Double temperature, String prompt);
+    String chat(String model, String tag, Double temperature, String prompt, OperationContext context);
 
     /**
      * 生成提示词模板.

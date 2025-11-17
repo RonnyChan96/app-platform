@@ -188,7 +188,7 @@ public class AgentInfoGenerateServiceImpl implements AgentInfoGenerateService {
         }
         ModelAccessInfo model = this.aippModelCenter.getDefaultModel(AippConst.CHAT_MODEL_TYPE, context);
         String prompt = new DefaultStringTemplate(template).render(values);
-        String rawContent = aippModelService.chat(model.getServiceName(), model.getTag(), 0.0, prompt);
+        String rawContent = aippModelService.chat(model.getServiceName(), model.getTag(), 0.0, prompt, context);
         return ContentProcessUtils.filterReasoningContent(rawContent);
     }
 }
