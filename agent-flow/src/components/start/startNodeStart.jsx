@@ -20,6 +20,7 @@ export const startNodeStart = (id, x, y, width, height, parent, drawer) => {
     self.type = "startNodeStart";
     self.text = "开始";
     self.componentName = "startComponent";
+    self.deletable = true; // 允许通过 Backspace 键删除开始节点
     delete self.flowMeta.jober;
 
     /**
@@ -27,14 +28,10 @@ export const startNodeStart = (id, x, y, width, height, parent, drawer) => {
      */
     const remove = self.remove;
     self.remove = (source) => {
-        // 保证页面最少一个开始节点
-        let beforeCount = self.page.sm.getShapes(s => s.type === 'startNodeStart').length;
-        if (beforeCount <= 1 && self.type === 'startNodeStart') {
-            return [];
-        }
+        // 允许删除开始节点（包括最后一个）
         const removed = remove.apply(self, [source]);
         const curCount = self.page.sm.getShapes(s => s.type === 'startNodeStart').length;
-        // 当从两个结束节点删除为一个的时候，需要通知最后一个开始节点刷新
+        // 当从两个开始节点删除为一个的时候，需要通知最后一个开始节点刷新
         if (curCount === 1) {
             self.page.triggerEvent({
                 type: 'START_NODE_MENU_CHANGE',

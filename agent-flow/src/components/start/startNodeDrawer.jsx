@@ -40,7 +40,7 @@ export const startNodeDrawer = (shape, div, x, y) => {
     };
 
     /**
-     * 开始节点header只显示重命名选项
+     * 开始节点header显示重命名和删除选项
      *
      * @override
      */
@@ -50,13 +50,12 @@ export const startNodeDrawer = (shape, div, x, y) => {
                 setEdit(true);
             },
         }];
-        if (shape.page.sm.getShapes(s => s.type === shape.type).length > 1) {
-            toolMenus.push({
-                key: 'delete', label: 'delete', action: () => {
-                    shape.remove();
-                },
-            });
-        }
+        // 允许删除开始节点（包括最后一个）
+        toolMenus.push({
+            key: 'delete', label: 'delete', action: () => {
+                shape.remove();
+            },
+        });
         return toolMenus;
     };
 

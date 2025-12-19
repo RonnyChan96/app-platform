@@ -51,14 +51,11 @@ export const endNodeDrawer = (shape, div, x, y) => {
             key: 'rename', label: 'rename', action: (setEdit) => {
                 setEdit(true);
             },
+        }, {
+            key: 'delete', label: 'delete', action: () => {
+                shape.remove();
+            },
         }];
-        if (shape.page.sm.getShapes(s => s.type === shape.type).length > 1) {
-            toolMenus.push({
-                key: 'delete', label: 'delete', action: () => {
-                    shape.remove();
-                },
-            });
-        }
         return toolMenus;
     };
 

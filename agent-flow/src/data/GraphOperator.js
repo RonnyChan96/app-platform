@@ -34,7 +34,7 @@ const graphOperator = (graphString) => {
   const getInputParams = (shape) => {
     if (shape.type === 'startNodeStart') {
       return shape.flowMeta.inputParams;
-    } else if (shape.type === 'endNodeEnd') {
+    } else if (shape.type === 'endNodeEnd' || shape.type === 'loopEndNodeEnd') {
       return shape.flowMeta.callback.converter.entity.inputParams;
     } else {
       return shape.flowMeta.jober.converter.entity.inputParams;

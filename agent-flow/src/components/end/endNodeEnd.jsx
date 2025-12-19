@@ -22,6 +22,7 @@ export const endNodeEnd = (id, x, y, width, height, parent, drawer) => {
     self.type = 'endNodeEnd';
     self.text = '结束';
     self.componentName = 'endComponent';
+    self.deletable = true; // 允许通过 Backspace 键删除结束节点
     self.flowMeta = {
         triggerMode: 'auto',
         callback: {
@@ -39,11 +40,7 @@ export const endNodeEnd = (id, x, y, width, height, parent, drawer) => {
      */
     const remove = self.remove;
     self.remove = (source) => {
-        // 保证页面最少一个结束节点
-        let beforeCount = self.page.sm.getShapes(s => s.type === 'endNodeEnd').length;
-        if (beforeCount <= 1 && self.type === 'endNodeEnd') {
-            return [];
-        }
+        // 允许删除结束节点（包括最后一个）
         const removed = remove.apply(self, [source]);
         const curCount = self.page.sm.getShapes(s => s.type === 'endNodeEnd').length;
         // 当从两个结束节点删除为一个的时候，需要通知最后一个结束节点刷新
