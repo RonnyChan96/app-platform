@@ -63,6 +63,8 @@ const BasicItems = (props: any) => {
       'fileExtractionNodeState': <FileExtractionIcon />,
       'noteNode': <ClassificationIcon />,
       'loopNodeState': <LoopIcon />,
+      'loopStartNode': <LoopIcon />,
+      'loopEndNodeEnd': <LoopIcon />,
       'manualCheckNodeState': <ManualCheckIcon />,
       'parallelNodeState': <PairingIcon />,
       'textConcatenateNodeState':  <TextConcatenateIcon />,

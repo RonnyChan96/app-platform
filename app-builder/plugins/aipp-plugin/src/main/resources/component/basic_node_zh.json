@@ -88,5 +88,15 @@
     "type": "replyNodeState",
     "name": "直接回复",
     "uniqueName": ""
+  },
+  {
+    "type": "loopStartNode",
+    "name": "循环开始",
+    "uniqueName": ""
+  },
+  {
+    "type": "loopEndNodeEnd",
+    "name": "循环结束",
+    "uniqueName": ""
   }
 ]

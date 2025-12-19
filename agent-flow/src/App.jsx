@@ -313,6 +313,8 @@ function App({i18n}) {
             );
           });
         }}>创建每一种节点</Button>
+        <Button onClick={() => window.agent.createNodeByPosition('loopStartNode', {x:100, y:100}, {uniqueName : ''})}>创建循环开始节点</Button>
+        <Button onClick={() => window.agent.createNodeByPosition('loopEndNodeEnd', {x:100, y:100}, {uniqueName : ''})}>创建循环结束节点</Button>
       </div>
       <div id='stage' style={{position: 'relative', width: 1600, height: 800}}></div>
       <CodeDrawer container={document.getElementById('stage')}

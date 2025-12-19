@@ -88,5 +88,15 @@
     "type": "replyNodeState",
     "name": "Reply",
     "uniqueName": ""
+  },
+  {
+    "type": "loopStartNode",
+    "name": "Loop Start",
+    "uniqueName": ""
+  },
+  {
+    "type": "loopEndNodeEnd",
+    "name": "Loop End",
+    "uniqueName": ""
   }
 ]
